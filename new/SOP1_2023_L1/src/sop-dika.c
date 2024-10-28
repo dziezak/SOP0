@@ -46,15 +46,20 @@ ssize_t bulk_write(int fd, char *buf, size_t count)
     return len;
 }
 
-void show_stage2(const char *const path, const struct stat *const stat_buf) {}
+void show_stage2(const char *const path, const struct stat *const stat_buf) {
+	char *line = NULL;
+	size_t line_size = 0;
+	ssize_t line_len1;//= getline(&line, &line_size, stdin);	
+	line_size = 0;
+	struct stat buf;
+
+
+
+}
 
 void write_stage3(const char *const path, const struct stat *const stat_buf) {}
 
 void walk_stage4(const char *const path, const struct stat *const stat_buf) {}
-
-if(str_len == -1) ERR("getline");
-        buffer[str_len-1] = '\0';
-        free(buffer);
 
 
 int interface_stage1() 
@@ -64,32 +69,62 @@ int interface_stage1()
 	size_t buf_size = 0;
 	ssize_t str_len = getline(&buffer, &buf_size, stdin);
 	
-	//printf("znak: %s\n", buffer);
-
 	if(str_len == -1) ERR("getline");
 	buffer[str_len-1] = '\0';
-	free(buffer);
+	//free(buffer);
 
 
 	char *line = NULL;
 	size_t line_size = 0;
-	ssize_t str_len1 = getline(&line, &line_size, stdin);	
-	switch(buffer)
+	ssize_t line_len1;//= getline(&line, &line_size, stdin);	
+	line_size = 0;
+	struct stat buf;
+	//printf("buf = %ld\n", buf.st_size());
+	//printf("%ld", str_len);
+	//if(buf_siz
+	char end = '4';
+	if(str_len > 2 ) buffer = &end;
+	switch(buffer[0])
 	{
-		case 1:
-	       		str_len1 = getline(&line, &line_size, stdin);
+		case '1':
+	       		line_len1 = getline(&line, &line_size, stdin);
+			line[line_len1-1] = '\0';
+			if(stat(line, &buf) == 0){
+			       	printf("Good path\n");
+				return 1;
+			}
+			else printf("Bad path\n");
+			free(line);
+			free(buffer);
 			break;
-		case 2:
-	       		str_len1 = getline(&line, &line_size, stdin);	
+		case '2':
+	       		line_len1 = getline(&line, &line_size, stdin);
+			line[line_len1-1] = '\0';
+			if(stat(line, &buf) == 0){
+			       	printf("Good path\n");
+				return 1;
+			}
+			else printf("Bad path\n");
+			free(line);
+			free(buffer);
 			break;
-		case 3:
-	       		str_len1 = getline(&line, &line_size, stdin);	
+		case '3':
+	       		line_len1 = getline(&line, &line_size, stdin);
+			line[line_len1-1] = '\0';
+			if(stat(line, &buf) == 0){
+			       	printf("Good path\n");
+				return 1;
+			}
+			else printf("Bad path\n");
+			free(line);
+			free(buffer);
 			break;
-		case 4:
-	       		str_len1 = getline(&line, &line_size, stdin);	
+		case '4':
+			return 0;
 			break;
 		default:
-		printf("Niepoprawne wejscie\n");
+		printf("Niepoprawne wejscie%s\n", line);
+		return 1;
 	}
 }
 

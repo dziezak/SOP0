@@ -52,7 +52,46 @@ void write_stage3(const char *const path, const struct stat *const stat_buf) {}
 
 void walk_stage4(const char *const path, const struct stat *const stat_buf) {}
 
-int interface_stage1() {}
+if(str_len == -1) ERR("getline");
+        buffer[str_len-1] = '\0';
+        free(buffer);
+
+
+int interface_stage1() 
+{
+	printf("1. show \n2. write\n3. walk\n4.exit\n");
+	char *buffer = NULL;
+	size_t buf_size = 0;
+	ssize_t str_len = getline(&buffer, &buf_size, stdin);
+	
+	//printf("znak: %s\n", buffer);
+
+	if(str_len == -1) ERR("getline");
+	buffer[str_len-1] = '\0';
+	free(buffer);
+
+
+	char *line = NULL;
+	size_t line_size = 0;
+	ssize_t str_len1 = getline(&line, &line_size, stdin);	
+	switch(buffer)
+	{
+		case 1:
+	       		str_len1 = getline(&line, &line_size, stdin);
+			break;
+		case 2:
+	       		str_len1 = getline(&line, &line_size, stdin);	
+			break;
+		case 3:
+	       		str_len1 = getline(&line, &line_size, stdin);	
+			break;
+		case 4:
+	       		str_len1 = getline(&line, &line_size, stdin);	
+			break;
+		default:
+		printf("Niepoprawne wejscie\n");
+	}
+}
 
 int main()
 {

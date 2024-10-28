@@ -1,0 +1,1 @@
+2 4 8 16 32 64 128 256 512 1024 Hello World. Ngnl It's nice to be back

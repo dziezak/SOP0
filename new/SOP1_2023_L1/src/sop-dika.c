@@ -46,16 +46,15 @@ ssize_t bulk_write(int fd, char *buf, size_t count)
     return len;
 }
 
+int is_regular_file(const char *path){
+	struct stat path_stat;
+	stat(path, &path_stat);;
+	return S_ISREG(path_stat.st_mode);
+}
+
+
 void show_stage2(const char *const path, const struct stat *const stat_buf) {
-	/*char *line = NULL;
-	size_t line_size = 0;
-	ssize_t line_len1;//= getline(&line, &line_size, stdin);	
-	line_size = 0;
-	struct stat buf;
-	*/
-
-
-
+	printf("%dl\n", is_regular_file( path));
 }
 
 void write_stage3(const char *const path, const struct stat *const stat_buf) {}
@@ -92,8 +91,6 @@ int interface_stage1()
 				return 1;
 			}
 			else printf("Bad path\n");
-			free(line);
-			free(buffer);
 			break;
 		case '2':
 	       		line_len1 = getline(&line, &line_size, stdin);
@@ -105,8 +102,6 @@ int interface_stage1()
 				return 1;
 			}
 			else printf("Bad path\n");
-			free(line);
-			free(buffer);
 			break;
 		case '3':
 	       		line_len1 = getline(&line, &line_size, stdin);
@@ -118,8 +113,6 @@ int interface_stage1()
 				return 1;
 			}
 			else printf("Bad path\n");
-			free(line);
-			free(buffer);
 			break;
 		case '4':
 			free(buffer);
@@ -130,6 +123,8 @@ int interface_stage1()
 		printf("Niepoprawne wejscie%s\n", line);
 		return 1;
 	}
+	free(line);
+	free(buffer);
 	return 1;
 }
 

@@ -134,7 +134,9 @@ void write_stage3(const char *const path, const struct stat *const stat_buf) {
 	close(fd);
 }
 
-void walk_stage4(const char *const path, const struct stat *const stat_buf) {}
+void walk_stage4(const char *const path, const struct stat *const stat_buf) {
+
+}
 
 
 int interface_stage1() 

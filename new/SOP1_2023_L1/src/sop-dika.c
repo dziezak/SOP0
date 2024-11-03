@@ -9,8 +9,10 @@
 #include <string.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <stdbool.h>
 
 #define ERR(source) (perror(source), fprintf(stderr, "%s:%d\n", __FILE__, __LINE__), exit(EXIT_FAILURE))
+#define BUFFER_SIZE 1024
 
 ssize_t bulk_read(int fd, char *buf, size_t count)
 {
@@ -86,7 +88,51 @@ void show_stage2(const char *const path, const struct stat *const stat_buf) {
 	}
 }
 
-void write_stage3(const char *const path, const struct stat *const stat_buf) {}
+void write_stage3(const char *const path, const struct stat *const stat_buf) {
+	char buffer[BUFFER_SIZE];
+	ssize_t bytes_read;
+	int fd = open(path, O_RDONLY);
+	if(fd < 0){
+		perror("Blad otwierania pliku do odczytu");
+		return;
+	}
+
+	printf("Obecna zawartosc pliku '%s': \n", path);
+	while((bytes_read = bulk_read(fd, buffer, sizeof(buffer))) > 0){
+		if(bulk_write(STDOUT_FILENO, buffer, bytes_read) < 0){
+			perror("Blad wyswietlenia zawartosci pliku");
+			close(fd);
+			return;
+		}
+	}
+	if(bytes_read < 0){
+		perror("Blad odczytu zawartosci pliku");
+		close(fd);
+		return;
+	}
+	close(fd);
+	fd = open(path, O_WRONLY |O_APPEND);
+	if(fd < 0){
+		perror("Blad otwierania pliku do odpisywania");
+		return;
+	}
+
+	printf("\nWpisz nowe linie ( pusta linia konczy dopisywanie):\n");
+	while(true){
+		if(fgets(buffer, sizeof(buffer), stdin) == NULL){
+			perror("Blad odczytu z stdin");
+			break;
+		}
+		if(strcmp(buffer, "\n") == 0){
+			break;
+		}
+		if(bulk_write(fd, buffer, strlen(buffer)) < 0){
+			perror("Blad odpisywania do pliku");
+			break;
+		}
+	}
+	close(fd);
+}
 
 void walk_stage4(const char *const path, const struct stat *const stat_buf) {}
 
@@ -126,6 +172,7 @@ int interface_stage1()
 	       		line_len1 = getline(&line, &line_size, stdin);
 			line[line_len1-1] = '\0';
 			if(stat(line, &buf) == 0){
+				write_stage3(line, &buf);
 			       	printf("Good path\n");
 				free(line);
 				free(buffer);

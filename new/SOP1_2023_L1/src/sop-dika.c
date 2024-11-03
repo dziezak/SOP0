@@ -46,15 +46,44 @@ ssize_t bulk_write(int fd, char *buf, size_t count)
     return len;
 }
 
-int is_regular_file(const char *path){
-	struct stat path_stat;
-	stat(path, &path_stat);;
-	return S_ISREG(path_stat.st_mode);
-}
 
 
 void show_stage2(const char *const path, const struct stat *const stat_buf) {
-	printf("%dl\n", is_regular_file( path));
+	if(S_ISREG(stat_buf->st_mode)){
+
+		printf("Plik %s\n", path);
+		printf("Rozmiar pliku: %ld bajtow\n", stat_buf->st_size);
+		FILE *file = fopen(path, "r");
+		if( file == NULL ) {
+			perror("Nie mozna otworzyc pliku");
+			return;
+		}
+
+		char ch;
+		while ((ch = fgetc(file)) != EOF){
+			putchar(ch);
+		}
+		fclose(file);
+
+	}else if( S_ISDIR(stat_buf->st_mode)){
+		printf("Katalog: %s\n", path);
+		DIR *dir = opendir(path);
+		if( dir == NULL ){
+			perror("Nie mozna otworzyc katalogu");
+			return;
+		}
+
+		struct dirent *entry;
+		printf("Zawartosc katalogu:\n");
+		while((entry = readdir(dir)) != NULL){
+			if(entry -> d_name[0] != '.'){
+				printf(" %s\n", entry -> d_name);
+			}
+		}
+		closedir(dir);
+	}else{
+		printf("Plik: %s jest innego typu (nieznany typ).\n", path);
+	}
 }
 
 void write_stage3(const char *const path, const struct stat *const stat_buf) {}
@@ -85,6 +114,7 @@ int interface_stage1()
 	       		line_len1 = getline(&line, &line_size, stdin);
 			line[line_len1-1] = '\0';
 			if(stat(line, &buf) == 0){
+				show_stage2(line, &buf);
 				free(line);
 				free(buffer);
 			       	printf("Good path\n");

@@ -134,8 +134,31 @@ void write_stage3(const char *const path, const struct stat *const stat_buf) {
 	close(fd);
 }
 
-void walk_stage4(const char *const path, const struct stat *const stat_buf) {
+int display_file_info(const char *path, const struct stat *stat_buf, int typeflag, struct FTW *ftwbuf){
+	for( int i = 0; i < ftwbuf -> level; i++){
+		printf(" ");
+	}
+	printf("%s: ", path);
+	if(typeflag == FTW_F) {
+		printf("Plik regularny\n");
+	}else if( typeflag == FTW_D || typeflag == FTW_DP){
+		printf("Katalog\n");
+	}else {
+		printf("Inny typ\n");
+	}
+	return 0;
+}
 
+void walk_stage4(const char *const path, const struct stat *const stat_buf) {
+	printf("Informacje o sciezce poczatkowej '%s':\n", path);
+	if(S_ISREG(stat_buf -> st_mode))
+		printf("Jest to plik regularny\n");
+	else if(S_ISDIR(stat_buf->st_mode))
+		printf("Jest to katalog\n");
+	else 
+		printf("Jest to inny typ pliku\n");
+	if(nftw(path, display_file_info, 10, FTW_PHYS) == -1)
+		perror("Blad wywolania nftw\n");
 }
 
 
@@ -186,6 +209,7 @@ int interface_stage1()
 	       		line_len1 = getline(&line, &line_size, stdin);
 			line[line_len1-1] = '\0';
 			if(stat(line, &buf) == 0){
+				walk_stage4(line, &buf);
 			       	printf("Good path\n");
 				free(line);
 				free(buffer);

@@ -47,11 +47,12 @@ ssize_t bulk_write(int fd, char *buf, size_t count)
 }
 
 void show_stage2(const char *const path, const struct stat *const stat_buf) {
-	char *line = NULL;
+	/*char *line = NULL;
 	size_t line_size = 0;
 	ssize_t line_len1;//= getline(&line, &line_size, stdin);	
 	line_size = 0;
 	struct stat buf;
+	*/
 
 
 
@@ -71,18 +72,13 @@ int interface_stage1()
 	
 	if(str_len == -1) ERR("getline");
 	buffer[str_len-1] = '\0';
-	//free(buffer);
-
 
 	char *line = NULL;
 	size_t line_size = 0;
 	ssize_t line_len1;//= getline(&line, &line_size, stdin);	
 	line_size = 0;
 	struct stat buf;
-	//printf("buf = %ld\n", buf.st_size());
-	//printf("%ld", str_len);
-	//if(buf_siz
-	char end = '4';
+	char end = '5';
 	if(str_len > 2 ) buffer = &end;
 	switch(buffer[0])
 	{
@@ -90,6 +86,8 @@ int interface_stage1()
 	       		line_len1 = getline(&line, &line_size, stdin);
 			line[line_len1-1] = '\0';
 			if(stat(line, &buf) == 0){
+				free(line);
+				free(buffer);
 			       	printf("Good path\n");
 				return 1;
 			}
@@ -102,6 +100,8 @@ int interface_stage1()
 			line[line_len1-1] = '\0';
 			if(stat(line, &buf) == 0){
 			       	printf("Good path\n");
+				free(line);
+				free(buffer);
 				return 1;
 			}
 			else printf("Bad path\n");
@@ -113,6 +113,8 @@ int interface_stage1()
 			line[line_len1-1] = '\0';
 			if(stat(line, &buf) == 0){
 			       	printf("Good path\n");
+				free(line);
+				free(buffer);
 				return 1;
 			}
 			else printf("Bad path\n");
@@ -120,12 +122,15 @@ int interface_stage1()
 			free(buffer);
 			break;
 		case '4':
+			free(buffer);
 			return 0;
 			break;
 		default:
+		free(buffer);
 		printf("Niepoprawne wejscie%s\n", line);
 		return 1;
 	}
+	return 1;
 }
 
 int main()

@@ -88,7 +88,7 @@ void show_stage2(const char *const path, const struct stat *const stat_buf) {
 	}
 }
 
-void write_stage3(const char *const path, const struct stat *const stat_buf) {
+void write_stage3(const char *const path, const struct stat *const stat_buf){
 	char buffer[BUFFER_SIZE];
 	ssize_t bytes_read;
 	int fd = open(path, O_RDONLY);
